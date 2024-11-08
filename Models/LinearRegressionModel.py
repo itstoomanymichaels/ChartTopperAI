@@ -7,7 +7,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression
 
 # Load the uploaded dataset
-file_path = r"C:\Users\tooma\OneDrive\Documents\ML Proj\Merger\data.csv"
+file_path = "../Merger/data.csv"
 data = pd.read_csv(file_path)
 
 # Drop unnecessary columns for model training
