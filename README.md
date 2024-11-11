@@ -1,20 +1,20 @@
 # Team 125: ChartTopperAI
 
 
-Project Proposal
+Project Midterm
 ---
 
 [Team 125 Timeline and Responsibility Chart](https://docs.google.com/spreadsheets/d/1BAeCRSATNG66czkyHXANuw6V8RqQEYm4ZzUVjBAZx54/edit?usp=sharing)
 
-## Proposal Contributions
+## Proposal and Midterm Contributions
 
-|Member               |Contribution            |
-|---------------------|------------------------|
-|Eric Guenoun         |Gantt Chart             |
-|Vinay Halwan         |Proposal Section 2 & 4  |
-|Tripp Hanley         |Proposal Section 1      |
-|Brandon Harris       |Presentation & Video    |
-|Michael Herndon III  |Proposal Section 3      |
+|Member               |Contributions                                      |
+|---------------------|---------------------------------------------------|
+|Eric Guenoun         |Gantt Chart                                        |
+|Vinay Halwan         |Proposal Section 2 & 4 & Processing Data           |
+|Tripp Hanley         |Proposal Section 1 & Scraping and Cleaning Data    |
+|Brandon Harris       |Presentation & Video                               |
+|Michael Herndon III  |Proposal Section 3 & Model Creation                |
 
 
 ## Introduction & Background
@@ -55,7 +55,7 @@ The F1 score chart reveals that Random Forest has a high F1 score of nearly 0.9,
 To address these issues, adjusting the decision threshold could help increase the F1 scores for both XGBoost and Logistic Regression. Random Forest could be further verified through cross-validation to ensure the high F1 score is not due to overfitting. Lastly, more feature engineering, such as creating interaction terms, may help the models improve their recall and precision balance.
 
 
-## Video and Presentation
+## Video and Presentation for Proposal
 - [Video](https://youtu.be/5eBhSzQKD0U)
 - [Presentation](https://docs.google.com/presentation/d/18zIXuh5MFcKSHXZa84NbpHkGcrnm5MaotNsH93NmArI/edit?usp=sharing)
 
