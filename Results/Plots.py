@@ -11,9 +11,8 @@ from xgboost import XGBClassifier
 from sklearn.linear_model import LogisticRegression
 from imblearn.over_sampling import SMOTE
 
-
 # Load the uploaded dataset
-file_path = "../Merger/data.csv"
+file_path = "/content/data.csv"
 data = pd.read_csv(file_path)
 
 # Drop unnecessary columns for model training
@@ -74,13 +73,16 @@ print(f"Random Forest Cross-Validation F1 Scores: {cv_scores_rf}")
 print(f"Random Forest Cross-Validation F1 Mean: {cv_scores_rf.mean()}")
 
 best_rf_model.fit(X_train_resampled, y_train_resampled)
+y_pred_rf_train = best_rf_model.predict(X_train_scaled)
 y_pred_rf = best_rf_model.predict(X_test_scaled)
 y_pred_rf_prob = best_rf_model.predict_proba(X_test_scaled)[:, 1]
 
 # Evaluation metrics for Random Forest
+f1_rf_train = f1_score(y_train, y_pred_rf_train)
 f1_rf = f1_score(y_test, y_pred_rf)
-auc_rf = roc_auc_score(y_test, y_pred_rf)
+accuracy_rf_train = accuracy_score(y_train, y_pred_rf_train)
 accuracy_rf = accuracy_score(y_test, y_pred_rf)
+auc_rf = roc_auc_score(y_test, y_pred_rf)
 print(f"Random Forest - F1 Score: {f1_rf}, AUC: {auc_rf}, Accuracy: {accuracy_rf}")
 
 # Hyperparameter grid for XGBoost
@@ -107,13 +109,16 @@ print(f"XGBoost Cross-Validation F1 Scores: {cv_scores_xgb}")
 print(f"XGBoost Cross-Validation F1 Mean: {cv_scores_xgb.mean()}")
 
 best_xgb_model.fit(X_train_resampled, y_train_resampled)
+y_pred_xgb_train = best_xgb_model.predict(X_train_scaled)
 y_pred_xgb = best_xgb_model.predict(X_test_scaled)
 y_pred_xgb_prob = best_xgb_model.predict_proba(X_test_scaled)[:, 1]
 
 # Evaluation metrics for XGBoost
+f1_xgb_train = f1_score(y_train, y_pred_xgb_train)
 f1_xgb = f1_score(y_test, y_pred_xgb)
-auc_xgb = roc_auc_score(y_test, y_pred_xgb)
+accuracy_xgb_train = accuracy_score(y_train, y_pred_xgb_train)
 accuracy_xgb = accuracy_score(y_test, y_pred_xgb)
+auc_xgb = roc_auc_score(y_test, y_pred_xgb)
 print(f"XGBoost - F1 Score: {f1_xgb}, AUC: {auc_xgb}, Accuracy: {accuracy_xgb}")
 
 # Logistic Regression with Randomized Search
@@ -138,13 +143,16 @@ print(f"Logistic Regression Cross-Validation F1 Scores: {cv_scores_lr}")
 print(f"Logistic Regression Cross-Validation F1 Mean: {cv_scores_lr.mean()}")
 
 best_lr_model.fit(X_train_resampled, y_train_resampled)
+y_pred_lr_train = best_lr_model.predict(X_train_scaled)
 y_pred_lr = best_lr_model.predict(X_test_scaled)
 y_pred_lr_prob = best_lr_model.predict_proba(X_test_scaled)[:, 1]
 
 # Evaluation metrics for Logistic Regression
+f1_lr_train = f1_score(y_train, y_pred_lr_train)
 f1_lr = f1_score(y_test, y_pred_lr)
-auc_lr = roc_auc_score(y_test, y_pred_lr)
+accuracy_lr_train = accuracy_score(y_train, y_pred_lr_train)
 accuracy_lr = accuracy_score(y_test, y_pred_lr)
+auc_lr = roc_auc_score(y_test, y_pred_lr)
 print(f"Logistic Regression - F1 Score: {f1_lr}, AUC: {auc_lr}, Accuracy: {accuracy_lr}")
 
 # Summary of Results
@@ -174,19 +182,29 @@ plt.legend(loc='lower right')
 # F1 Score Comparison
 plt.subplot(1, 3, 2)
 models = ['Random Forest', 'XGBoost', 'Logistic Regression']
-f1_scores = [f1_rf, f1_xgb, f1_lr]
-plt.bar(models, f1_scores, color=['blue', 'green', 'red'])
+f1_scores_train = [f1_rf_train, f1_xgb_train, f1_lr_train]
+f1_scores_test = [f1_rf, f1_xgb, f1_lr]
+x = np.arange(len(models))
+width = 0.35
+plt.bar(x - width/2, f1_scores_train, width, label='Train', color='blue')
+plt.bar(x + width/2, f1_scores_test, width, label='Test', color='red')
 plt.xlabel('Model')
 plt.ylabel('F1 Score')
 plt.title('F1 Score Comparison')
+plt.xticks(ticks=x, labels=models)
+plt.legend()
 
 # Accuracy Comparison
 plt.subplot(1, 3, 3)
-accuracies = [accuracy_rf, accuracy_xgb, accuracy_lr]
-plt.bar(models, accuracies, color=['blue', 'green', 'red'])
+accuracies_train = [accuracy_rf_train, accuracy_xgb_train, accuracy_lr_train]
+accuracies_test = [accuracy_rf, accuracy_xgb, accuracy_lr]
+plt.bar(x - width/2, accuracies_train, width, label='Train', color='blue')
+plt.bar(x + width/2, accuracies_test, width, label='Test', color='red')
 plt.xlabel('Model')
 plt.ylabel('Accuracy')
 plt.title('Accuracy Comparison')
+plt.xticks(ticks=x, labels=models)
+plt.legend()
 
 plt.tight_layout()
 plt.show()
