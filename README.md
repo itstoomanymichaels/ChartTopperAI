@@ -1,20 +1,20 @@
 # Team 125: ChartTopperAI
 
 
-Project Proposal
+Project Midterm
 ---
 
 [Team 125 Timeline and Responsibility Chart](https://docs.google.com/spreadsheets/d/1BAeCRSATNG66czkyHXANuw6V8RqQEYm4ZzUVjBAZx54/edit?usp=sharing)
 
-## Proposal Contributions
+## Proposal and Midterm Contributions
 
-|Member               |Contribution            |
-|---------------------|------------------------|
-|Eric Guenoun         |Gantt Chart             |
-|Vinay Halwan         |Proposal Section 2 & 4  |
-|Tripp Hanley         |Proposal Section 1      |
-|Brandon Harris       |Presentation & Video    |
-|Michael Herndon III  |Proposal Section 3      |
+|Member               |Contributions                                      |
+|---------------------|---------------------------------------------------|
+|Eric Guenoun         |Gantt Chart                                        |
+|Vinay Halwan         |Proposal Section 2 & 4 & Processing Data           |
+|Tripp Hanley         |Proposal Section 1 & Scraping and Cleaning Data    |
+|Brandon Harris       |Presentation & Video                               |
+|Michael Herndon III  |Proposal Section 3 & Model Creation                |
 
 
 ## Introduction & Background
@@ -27,17 +27,35 @@ Predicting a music’s success is incredibly difficult within the increasingly c
 
 ## Methods
 
-To build an accurate model for predicting song success on streaming platforms, effective data preprocessing is essential. First, we plan to standardize the numerical features such as danceability, energy, valence, tempo, etc. using Scikit-learn’s StandardScaler, ensuring that the varying scales of these features do not negatively impact the model’s performance. For categorical variables such as song genre, we will use one-hot encoding to convert them into numerical representations that can be used by machine learning algorithms. Additionally, to avoid overfitting and improve performance, we will apply SelectKBest to reduce the dimensionality of the dataset by selecting the most relevant features. Features from the data such as artist, song name, and popularity will ultimately be ignored since this will introduce a significant amount of bias into the model.
+Before building an accurate model for our data, we had to locate a dataset to use. Immediately one that stood out was [this one by MaharshiPandya on Kaggle](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset). Although this provides a great starting point to begin testing models, the dataset is fairly limiting. In that dataset, most of the songs are over 1,000,000 listens or are well-known artists. Although that is typical for a mid-sized artist, we want our model to focus on the success of small artists. To resolve this issue, we created our own dataset that removes the bias towards and instead favors smaller songs that could reveal features with higher variance. Because spotify does not support a graph-like structure with the recommendation api, we had to pivot towards using a single large playlist. When this happened though, it tended to favor large artists which was the issue with the previous dataset. Finally, we settled on making a webscraper that has over 1,000 genres of music hardcoded and it would choose a random playlist from the 850 queried based on the genre and scrape 50 songs from it. With this approach, we received a far greater number of smaller songs. Another effect was the removal of cultural bias. In the first two iterations of the scraper, there was a heavy bias towards English-Speaking artists, as that is the majority of Spotify's user base due to the single playlist being used or scraping top search results. With the new playlist search feature the scraper was scraping data from obscure genres from traditional Zulu to Mongolian to Horrorcore. The last hurdle we had to overcome was the rate-limit. Unlike other APIs, Spotify uses a sliding window 30 second rate-limit. This means we had to spread out our queries and combine them. The current scraper avoids the rate limit by having a write buffer and numerous threads, where 50 songs are queried at once then returned to the buffer. Once the buffer is at capacity, the fastcsv package asynchronously writes to [our csv file dataset found here](https://drive.google.com/file/d/1UziZiIdvaWGnPYy869o9lhL2ziR87zQh/view?usp=sharing). With the webscraping complete, the data needed to be cleaned
 
-After preprocessing, we intend to experiment with several machine learning models. Linear regression will serve as a baseline for predicting continuous targets like the number of streams. Random forests, implemented through RandomForestClassifier, are well-suited for our data because they can handle both numerical and categorical variables without explicit encoding [[3]](#references). To further improve accuracy, especially in datasets where relationships are non-linear, we will use XGBoost, which builds trees sequentially to correct errors made by earlier trees [[4]](#references).
+To build an accurate model for predicting song success on streaming platforms, effective data preprocessing is essential. Numerical features such as danceability, energy, valence, tempo, etc. are standardized using Scikit-learn’s StandardScaler, ensuring that the varying scales of these features do not negatively impact the model’s performance. For categorical variables such as song genre, one-hot encoding was employed to convert them into numerical representations that can be used by machine learning algorithms. Additionally, to avoid overfitting and improve performance, we applied SelectKBest to reduce the dimensionality of the dataset by selecting the most relevant features. Features from the data such as artist, song name, and popularity will ultimately be ignored since this will introduce a significant amount of bias into the model.
 
-For our supervised learning approach, we plan to focus primarily on ensemble methods, which are especially useful for handling complex, non-linear data [[5]](#references) [[6]](#references). In addition, we will use logistic regression for binary classification tasks, such as predicting whether a song will become a hit or not. This combination of preprocessing and model experimentation should provide a strong foundation for predicting song success.
+After preprocessing, we intend to experiment with several machine learning models. Logistis regression regression will serve as a baseline for predicting targets such as the song being a hit or not. Random forests, implemented through RandomForestClassifier, are well-suited for our data because they can handle both numerical and categorical variables without explicit encoding [[3]](#references). To further improve accuracy, especially in datasets where relationships are non-linear, we will use XGBoost, which builds trees sequentially to correct errors made by earlier trees [[4]](#references).
+
+For our supervised learning approach, we focus primarily on ensemble methods, which are especially useful for handling complex, non-linear data [[5]](#references) [[6]](#references). In addition, we will use logistic regression for binary classification tasks, such as predicting whether a song will become a hit or not. This combination of preprocessing and model experimentation should provide a strong foundation for predicting song success.
 
 ## Results and Discussion
 
 The primary goal of this project is to create a machine learning model that’s capable of predicting the success of a song. It’ll utilize key metrics like accuracy, f1 score, and area under the ROC curve. We desire in achieving an f1 score of at least 0.8, and an AUC-ROC score that exceeds 0.85 to show a strong balance between recall and precision as to highlight the model’s abilities to distinguish between successful and unsuccessful tracks. We are also committed towards ethical considerations by addressing biases of genre, artist popularity, and other subjective factors. Our expectation is that the model will deliver a high predictive accuracy while encouraging a range of artistic expression.
 
-## Video and Presentation
+![alt-text-1](./Results/ROC.png "ROC")  
+The ROC curve shows that Random Forest has the highest Area Under the Curve (AUC) at 0.68, followed by XGBoost at 0.63, while Logistic Regression lags behind with an AUC of 0.50, which is equivalent to random guessing. Random Forest’s relatively higher AUC suggests that it effectively distinguishes between positive and negative classes by capturing the underlying non-linear relationships in the dataset. However, the AUC is still far from perfect, implying that there is room for improvement, possibly through hyperparameter tuning to optimize the model further. XGBoost’s AUC is suboptimal, likely due to a lack of appropriate hyperparameter tuning. XGBoost’s performance is highly dependent on parameters such as the learning rate, tree depth, and the number of boosting rounds. Without careful tuning, the model may fail to capture the important patterns needed to differentiate between classes effectively.  
+
+Logistic Regression performs poorly with an AUC close to 0.50, indicating that it has no differentiating power between classes and is essentially guessing. We assume this is because Logistic Regression assumes a linear boundary between classes, which is not well-suited to the non-linear relationships present in this data. To improve the models, feature engineering such as introducing non-linear features or interaction terms could help Logistic Regression better approximate the decision boundary. Additionally, using cross-validation would help ensure that the models generalize well to unseen data. Finally, optimizing hyperparameters for XGBoost could lead to a significant improvement in its ability to capture relevant patterns and improve its AUC.  
+
+![alt-text-2](./Results/Accuracy.png "Accuracy")  
+The accuracy chart shows that the Random Forest Classifier outperforms both XGBoost and Logistic Regression significantly, with an accuracy close to 0.70, compared to XGBoost and Logistic Regression, which have accuracies around 0.30. Random Forest performs well because of its ensemble nature, which combines multiple decision trees to improve prediction accuracy by reducing overfitting and increasing robustness against noisy features. Additionally, Random Forest captures non-linear relationships effectively, which likely exist in this dataset. XGBoost, on the other hand, underperforms mainly due to the lack of hyperparameter tuning. As XGBoost is highly sensitive to settings like the learning rate, depth of trees, and the number of estimators, the default settings might not be optimal for this data. The moderate accuracy for XGBoost may also be influenced by the presence of class imbalance, which causes the model to favor the majority class.  
+
+Logistic Regression performs poorly because it assumes a linear relationship between features and the target, and if the underlying relationships are non-linear, it fails to model them accurately. Moreover, without feature scaling, Logistic Regression may struggle with assigning appropriate weights to features with different magnitudes, leading to suboptimal performance. To improve Random Forest further, hyperparameter tuning could be employed to enhance its performance while preventing overfitting. XGBoost requires careful hyperparameter tuning and cross-validation to perform better, while Logistic Regression could benefit from scaling the features and introducing polynomial features to better capture non-linear relationships.
+
+![alt-text-3](./Results/F1.png "F1")
+The F1 score chart reveals that Random Forest has a high F1 score of nearly 0.9, while XGBoost and Logistic Regression have almost negligible F1 scores. Random Forest’s high F1 score indicates that it effectively balances both precision and recall, minimizing false positives and false negatives. This suggests that Random Forest is capable of detecting positive and negative labels with similar effectiveness, which may be due to its ability to capture the class distribution well through its ensemble approach. In contrast, both XGBoost and Logistic Regression struggle with a very low F1 score, suggesting that they are unable to effectively balance precision and recall, which might be due to class imbalance in the dataset. When there is an imbalance, models can become biased toward predicting the majority class, which leads to poor recall for the minority class and, consequently, a low F1 score. Additionally, XGBoost and Logistic Regression use a default probability threshold of 0.5 for classification, which may not be ideal given the imbalance, further degrading their F1 scores.  '
+
+To address these issues, adjusting the decision threshold could help increase the F1 scores for both XGBoost and Logistic Regression. Random Forest could be further verified through cross-validation to ensure the high F1 score is not due to overfitting. Lastly, more feature engineering, such as creating interaction terms, may help the models improve their recall and precision balance.
+
+
+## Video and Presentation for Proposal
 - [Video](https://youtu.be/5eBhSzQKD0U)
 - [Presentation](https://docs.google.com/presentation/d/18zIXuh5MFcKSHXZa84NbpHkGcrnm5MaotNsH93NmArI/edit?usp=sharing)
 
