@@ -1,12 +1,13 @@
 # Import necessary libraries
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.metrics import f1_score, roc_auc_score, accuracy_score
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
+from sklearn.linear_model import LogisticRegression
 from imblearn.over_sampling import SMOTE
 
 # Load the uploaded dataset
@@ -57,13 +58,13 @@ param_grid_rf = {
 }
 
 rf_model = RandomForestClassifier(random_state=42, class_weight='balanced')
-grid_search_rf = GridSearchCV(estimator=rf_model, param_grid=param_grid_rf, cv=3, n_jobs=-1, scoring='f1')
-grid_search_rf.fit(X_train_resampled, y_train_resampled)
+random_search_rf = RandomizedSearchCV(estimator=rf_model, param_distributions=param_grid_rf, n_iter=20, cv=3, n_jobs=-1, scoring='f1', random_state=42)
+random_search_rf.fit(X_train_resampled, y_train_resampled)
 
-print("Best parameters found for Random Forest: ", grid_search_rf.best_params_)
+print("Best parameters found for Random Forest: ", random_search_rf.best_params_)
 
 # Train Random Forest with the best parameters
-best_rf_model = grid_search_rf.best_estimator_
+best_rf_model = random_search_rf.best_estimator_
 best_rf_model.fit(X_train_resampled, y_train_resampled)
 y_pred_rf = best_rf_model.predict(X_test_scaled)
 
@@ -82,14 +83,15 @@ param_grid_xgb = {
     'colsample_bytree': [0.6, 0.8, 1.0]
 }
 
-xgb_model = XGBClassifier(random_state=42, use_label_encoder=False, eval_metric='logloss')
-grid_search_xgb = GridSearchCV(estimator=xgb_model, param_grid=param_grid_xgb, cv=3, n_jobs=-1, scoring='f1')
-grid_search_xgb.fit(X_train_resampled, y_train_resampled)
 
-print("Best parameters found for XGBoost: ", grid_search_xgb.best_params_)
+xgb_model = XGBClassifier(random_state=42, use_label_encoder=False, eval_metric='logloss')
+random_search_xgb = RandomizedSearchCV(estimator=xgb_model, param_distributions=param_grid_xgb, n_iter=20, cv=3, n_jobs=-1, scoring='f1', random_state=42)
+random_search_xgb.fit(X_train_resampled, y_train_resampled)
+
+print("Best parameters found for XGBoost: ", random_search_xgb.best_params_)
 
 # Train XGBoost with the best parameters
-best_xgb_model = grid_search_xgb.best_estimator_
+best_xgb_model = random_search_xgb.best_estimator_
 best_xgb_model.fit(X_train_resampled, y_train_resampled)
 y_pred_xgb = best_xgb_model.predict(X_test_scaled)
 
@@ -99,9 +101,7 @@ auc_xgb = roc_auc_score(y_test, y_pred_xgb)
 accuracy_xgb = accuracy_score(y_test, y_pred_xgb)
 print(f"XGBoost - F1 Score: {f1_xgb}, AUC: {auc_xgb}, Accuracy: {accuracy_xgb}")
 
-# Logistic Regression with Grid Search
-from sklearn.linear_model import LogisticRegression
-
+# Logistic Regression with Randomized Search
 param_grid_lr = {
     'C': [0.01, 0.1, 1, 10, 100],
     'penalty': ['l1', 'l2'],
@@ -109,13 +109,13 @@ param_grid_lr = {
 }
 
 lr_model = LogisticRegression(random_state=42, class_weight='balanced')
-grid_search_lr = GridSearchCV(estimator=lr_model, param_grid=param_grid_lr, cv=3, n_jobs=-1, scoring='f1')
-grid_search_lr.fit(X_train_resampled, y_train_resampled)
+random_search_lr = RandomizedSearchCV(estimator=lr_model, param_distributions=param_grid_lr, n_iter=20, cv=3, n_jobs=-1, scoring='f1', random_state=42)
+random_search_lr.fit(X_train_resampled, y_train_resampled)
 
-print("Best parameters found for Logistic Regression: ", grid_search_lr.best_params_)
+print("Best parameters found for Logistic Regression: ", random_search_lr.best_params_)
 
 # Train Logistic Regression with the best parameters
-best_lr_model = grid_search_lr.best_estimator_
+best_lr_model = random_search_lr.best_estimator_
 best_lr_model.fit(X_train_resampled, y_train_resampled)
 y_pred_lr = best_lr_model.predict(X_test_scaled)
 
