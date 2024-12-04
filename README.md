@@ -10,7 +10,7 @@ Project Final
 
 |Member               |Contributions                                      |
 |---------------------|---------------------------------------------------|
-|Eric Guenoun         |Gantt Chart                                        |
+|Eric Guenoun         |Gantt Chart & Model Training                       |
 |Vinay Halwan         |Proposal Section 2 & 4 & Processing Data           |
 |Tripp Hanley         |Proposal Section 1 & Scraping and Cleaning Data    |
 |Brandon Harris       |Presentation & Video                               |
@@ -105,9 +105,12 @@ Logistic Regression demonstrated similar F1 scores for both training and test da
 
 **Logistic Regression**: Logistic Regression performed comparably to XGBoost, with high consistency between training and test metrics. As a simpler model, it is less prone to overfitting and is easier to interpret. The downside is that Logistic Regression may struggle to capture non-linear relationships as effectively as more complex models like XGBoost or Random Forest. Despite this limitation, its performance in this scenario is notable, indicating that the dataset's relationships may be sufficiently linear for Logistic Regression to perform well.
 
-## Video and Presentation for Proposal
-- [Video](https://youtu.be/5eBhSzQKD0U)
-- [Presentation](https://docs.google.com/presentation/d/18zIXuh5MFcKSHXZa84NbpHkGcrnm5MaotNsH93NmArI/edit?usp=sharing)
+<h2>Next Steps</h2>
+If there were to be any next steps for this project, it would be interesting if we had limited the scope of the songs that we were selecting from to better refine the determination of a song's success. By limiting the genre of music as different genres of music have different number to be qualified as a success because the number of plays needed to be quantified as a success in a random genre such as Liquid Funk is going to be less than a more mainstream genre like Rap.
+
+## Video and Presentation for Final
+- [Video](https://youtu.be/pP_2iJFCCrg)
+- [Presentation](https://docs.google.com/presentation/d/1ltT4js5sXEZ_EWiLI4PNE3aU7CGKP9I0yHIj1GPLTlw/edit?usp=sharing)
 
 ## References
 
